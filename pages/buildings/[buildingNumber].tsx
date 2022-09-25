@@ -8,8 +8,8 @@ import type { BuildingFull } from "../api/building";
 import { useCallback, useEffect, useState } from "react";
 import isApartmentTaxPaid from "../../utils/isApartmentTaxPaid";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
-import { io } from "socket.io-client";
 import type { Report } from "@prisma/client";
+import { socket } from "../../layouts/MainLayout";
 
 const Tile = styled("div")({
   borderRadius: 10,
@@ -27,38 +27,53 @@ const BuildingPage: NextPage = () => {
     query: { buildingNumber },
   } = useRouter();
 
-  const [building, setBuilding] = useState<BuildingFull>({} as BuildingFull);
+  const [building, setBuilding] = useState<BuildingFull>();
 
-  const { makeRequest: fetchBuilding } = useMakeAjaxRequest<BuildingFull>({
-    lazy: true,
-  });
+  const { response: buildingFromApi, makeRequest: fetchBuilding } =
+    useMakeAjaxRequest<BuildingFull>({
+      lazy: true,
+    });
 
   useEffect(() => {
     if (!Number(buildingNumber)) return;
 
-    fetchBuilding({
-      url: `/building?buildingNumber=${buildingNumber}`,
-    }).then((buildingFromApi) => {
-      setBuilding(buildingFromApi || ({} as BuildingFull));
-
-      const socket = io();
-      socket.on("new_report", (data) => {
-        const report = data.report as Report;
-        if (buildingFromApi?.id !== report.buildingId) return;
-
-        const copy = { ...building };
-        copy.reports.splice(
-          copy.reports.findIndex((r) => r.id === report.id),
-          1,
-          report
-        );
-        setBuilding(copy);
+    const getData = async () => {
+      const data = await fetchBuilding({
+        url: `/building?buildingNumber=${buildingNumber}`,
       });
-    });
+
+      setBuilding(data!);
+    };
+
+    getData();
   }, [buildingNumber]);
 
+  const handleNewReport = useCallback(
+    (data: any) => {
+      const report = data.report as Report;
+
+      if (building?.id !== report.buildingId) {
+        setBuilding(buildingFromApi);
+        return;
+      }
+
+      const copy = { ...building };
+      copy.reports.splice(
+        copy.reports.findIndex((r) => r.id === report.id),
+        1,
+        report
+      );
+      setBuilding(copy);
+    },
+    [building]
+  );
+
+  useEffect(() => {
+    socket?.on("new_report", handleNewReport);
+  }, [socket, handleNewReport]);
+
   const renderApartments = useCallback(() => {
-    if (!Object.keys(building).length) return null;
+    if (!building) return null;
 
     const sortedApartments = building.apartments.sort(
       (a, b) => a.number - b.number

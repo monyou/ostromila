@@ -7,11 +7,14 @@ import { HomeOutlined, ToolOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 import type { ItemType } from "antd/lib/menu/hooks/useItems";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import logoImg from "../public/assets/logo.png";
 import Image from "next/image";
+import { io, Socket } from "socket.io-client";
 
 const { Content, Footer, Sider } = Layout;
+
+export let socket: Socket | null = null;
 
 const MainLayout = (props: any) => {
   const {
@@ -19,8 +22,15 @@ const MainLayout = (props: any) => {
   } = useGlobalContext();
   const router = useRouter();
 
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+
   useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/ws");
+    const openWS = async () => {
+      await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/ws");
+      socket = io();
+    };
+
+    openWS();
   }, []);
 
   const getMenuItems = (): ItemType[] => {
@@ -59,9 +69,19 @@ const MainLayout = (props: any) => {
       </Head>
 
       <Layout css={{ minHeight: "100vh" }}>
-        <Sider breakpoint="sm" collapsedWidth="0">
+        <Sider
+          breakpoint="sm"
+          collapsedWidth="0"
+          collapsed={sidebarCollapsed}
+          onCollapse={(value) => setSidebarCollapsed(value)}
+        >
           <div
-            onClick={() => router.push("/")}
+            onClick={() => {
+              if (document.body.clientWidth < 577) {
+                setSidebarCollapsed(true);
+              }
+              router.push("/");
+            }}
             css={{ cursor: "pointer", textAlign: "center", padding: 5 }}
           >
             <Image src={logoImg} alt="logo" width={120} height={80} />
@@ -72,11 +92,16 @@ const MainLayout = (props: any) => {
             selectedKeys={[router?.asPath || ""]}
             triggerSubMenuAction="click"
             items={getMenuItems()}
-            onClick={(info) => router.push(info.key)}
+            onClick={(info) => {
+              if (document.body.clientWidth < 577) {
+                setSidebarCollapsed(true);
+              }
+              router.push(info.key);
+            }}
           />
         </Sider>
         <Layout>
-          <Content css={{ margin: '0px 40px' }}>
+          <Content css={{ margin: "0px 40px" }}>
             <div>{props.children}</div>
           </Content>
           <Footer css={{ textAlign: "center", padding: 12 }}>

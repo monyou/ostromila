@@ -59,7 +59,9 @@ const AdminLoginPage: NextPage = () => {
         />
       </Head>
 
-      <h1 css={{ textAlign: "center" }}>{translate.AdminLoginPage.title}</h1>
+      <h1 css={{ textAlign: "center", marginTop: 20 }}>
+        {translate.AdminLoginPage.title}
+      </h1>
 
       <Form
         css={{ marginTop: 40 }}
