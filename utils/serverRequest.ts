@@ -25,6 +25,11 @@ const serverRequest = async (
       return;
     }
 
+    if (req.method === "OPTIONS") {
+      res.status(200).send("ok");
+      return;
+    }
+
     const prisma = new PrismaClient();
     await prisma.$connect();
 
