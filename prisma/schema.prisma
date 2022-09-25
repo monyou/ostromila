@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  username  String          @unique
+  password  String
+  name      String
+  type      AdminType
+  buildings AdminBuilding[]
+}
+
+model AdminBuilding {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  buildingId String   @db.ObjectId
+  adminId    String   @db.ObjectId
+  admin      Admin    @relation(fields: [adminId], references: [id])
+  building   Building @relation(fields: [buildingId], references: [id])
+}
+
+model Building {
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  number     Int             @unique
+  apartments Apartment[]
+  reports    Report[]
+  messages   Message[]
+  admins     AdminBuilding[]
+}
+
+model Apartment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  number     Int
+  occupant   String?
+  phone      String?
+  tax        Float
+  building   Building @relation(references: [id], fields: [buildingId])
+  buildingId String   @db.ObjectId
+}
+
+model Report {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  date       String   @unique
+  reportData Json
+  building   Building @relation(references: [id], fields: [buildingId])
+  buildingId String   @db.ObjectId
+}
+
+model Message {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt  DateTime @default(now())
+  title      String
+  content    String
+  building   Building @relation(references: [id], fields: [buildingId])
+  buildingId String   @db.ObjectId
+}
+
+enum AdminType {
+  HouseManager
+  Cashier
+}
