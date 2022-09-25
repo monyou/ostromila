@@ -211,7 +211,9 @@ const AdminPage: NextPage = () => {
         <meta name="description" content={translate.AdminPage.meta_content} />
       </Head>
 
-      <h1 css={{ textAlign: "center" }}>{translate.AdminPage.title}</h1>
+      <h1 css={{ textAlign: "center", marginTop: 20 }}>
+        {translate.AdminPage.title}
+      </h1>
 
       <Collapse defaultActiveKey={["1"]} ghost>
         <Panel header={translate.AdminPage.panel.title1} key="1">

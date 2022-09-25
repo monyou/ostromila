@@ -8,6 +8,8 @@ import type { BuildingFull } from "../api/building";
 import { useCallback, useEffect, useState } from "react";
 import isApartmentTaxPaid from "../../utils/isApartmentTaxPaid";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
+import { io } from "socket.io-client";
+import type { Report } from "@prisma/client";
 
 const Tile = styled("div")({
   borderRadius: 10,
@@ -32,16 +34,27 @@ const BuildingPage: NextPage = () => {
   });
 
   useEffect(() => {
-    const getData = async () => {
-      const data = await fetchBuilding({
-        url: `/building?buildingNumber=${buildingNumber}`,
-      });
-      setBuilding(data || ({} as BuildingFull));
-    };
-
     if (!Number(buildingNumber)) return;
 
-    getData();
+    fetchBuilding({
+      url: `/building?buildingNumber=${buildingNumber}`,
+    }).then((buildingFromApi) => {
+      setBuilding(buildingFromApi || ({} as BuildingFull));
+
+      const socket = io();
+      socket.on("new_report", (data) => {
+        const report = data.report as Report;
+        if (buildingFromApi?.id !== report.buildingId) return;
+
+        const copy = { ...building };
+        copy.reports.splice(
+          copy.reports.findIndex((r) => r.id === report.id),
+          1,
+          report
+        );
+        setBuilding(copy);
+      });
+    });
   }, [buildingNumber]);
 
   const renderApartments = useCallback(() => {
@@ -100,7 +113,7 @@ const BuildingPage: NextPage = () => {
         />
       </Head>
 
-      <h1 css={{ textAlign: "center", margin: '20px 0px'}}>
+      <h1 css={{ textAlign: "center", margin: "20px 0px" }}>
         {translate.BuildingPage(buildingNumber as string).title}
       </h1>
       <div
@@ -112,7 +125,16 @@ const BuildingPage: NextPage = () => {
             "report admins"
             "report news"
           `,
-          gridTemplateRows: 'max-content 1fr'
+          gridTemplateRows: "max-content 1fr",
+          "@media (max-width: 778px)": {
+            height: "auto",
+            gridTemplateAreas: `
+              "admins"
+              "report"
+              "news"
+            `,
+            gridTemplateRows: "max-content 1fr max-content",
+          },
         }}
       >
         <Tile css={{ gridArea: "admins" }}>

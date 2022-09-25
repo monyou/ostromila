@@ -19,6 +19,8 @@ export default async function handler(
         data: reportData,
       });
 
+      //@ts-ignore
+      res.socket?.server?.io?.emit("new_report", { report });
       res.status(200).json({
         Exception: "",
         Success: true,
