@@ -65,9 +65,10 @@ const AdminLoginPage: NextPage = () => {
 
       <Form
         css={{ marginTop: 40 }}
+        labelCol={{ span: 10 }}
+        wrapperCol={{ xxl: { span: 5 }, sm: { span: 10 } }}
+        labelWrap
         name="login_form"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 8 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
         autoComplete="on"
@@ -98,7 +99,7 @@ const AdminLoginPage: NextPage = () => {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Form.Item wrapperCol={{ offset: 10, span: 14 }}>
           <Button type="primary" htmlType="submit">
             {translate.AdminLoginPage.submit}
           </Button>
