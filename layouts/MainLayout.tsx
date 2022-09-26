@@ -27,7 +27,7 @@ const MainLayout = (props: any) => {
   useEffect(() => {
     const openWS = async () => {
       await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/ws");
-      socket = io("/");
+      socket = io();
     };
 
     openWS();
