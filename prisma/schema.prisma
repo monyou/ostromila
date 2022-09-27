@@ -38,6 +38,7 @@ model Apartment {
   number     Int
   occupant   String?
   phone      String?
+  email      String?
   tax        Float
   building   Building @relation(references: [id], fields: [buildingId])
   buildingId String   @db.ObjectId

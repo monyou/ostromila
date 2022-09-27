@@ -17,6 +17,7 @@ export type Locale = {
     apartment: string;
     news: string;
     report: string;
+    prevMonthReportNotReady: string;
   };
   AdminPage: LocaleMetaInfo & {
     title: string;
@@ -24,7 +25,6 @@ export type Locale = {
       title1: string;
       title2: string;
     };
-    information: string;
     pick_building: string;
     pick_month: string;
     apartment_title: (apartmentNumber: number) => string;
@@ -59,6 +59,7 @@ export type Locale = {
       HouseManager: string;
       Cashier: string;
     };
+    information: string;
   };
   ApiErrors: Record<string, string>;
 };
@@ -83,7 +84,8 @@ const locales: Record<string, Locale> = {
       title: `Блок ${buildingNumber}`,
       apartment: "Апартамент",
       news: "Новини",
-      report: "Отчет",
+      report: "Отчет до момента за",
+      prevMonthReportNotReady: "Отчетът за миналия месец се генерира",
     }),
     AdminPage: {
       meta_title: "Администрация",
@@ -95,7 +97,6 @@ const locales: Record<string, Locale> = {
         title2: "Отчети",
       },
       apartment_title: (apartmentNumber) => `Ап. ${apartmentNumber}`,
-      information: "Информация",
       paid: "Платено",
       pick_building: "Изберете блок",
       pick_month: "Изберете месец",
@@ -144,6 +145,7 @@ const locales: Record<string, Locale> = {
         HouseManager: "Домоуправител",
         Cashier: "Касиер",
       },
+      information: "Информация",
     },
     ApiErrors: {
       "403": "Забранен достъп. Влезте в профила си.",

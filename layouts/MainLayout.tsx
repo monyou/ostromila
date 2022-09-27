@@ -22,7 +22,7 @@ const MainLayout = (props: any) => {
   } = useGlobalContext();
   const router = useRouter();
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(true);
 
   useEffect(() => {
     const openWS = async () => {
@@ -77,14 +77,14 @@ const MainLayout = (props: any) => {
         >
           <div
             onClick={() => {
-              if (document.body.clientWidth < 577) {
+              if (document.body.clientWidth < 576) {
                 setSidebarCollapsed(true);
               }
               router.push("/");
             }}
             css={{ cursor: "pointer", textAlign: "center", padding: 5 }}
           >
-            <Image src={logoImg} alt="logo" width={120} height={80} />
+            <Image src={logoImg} alt="logo" width={107} height={80} />
           </div>
           <Menu
             theme="dark"
@@ -93,7 +93,7 @@ const MainLayout = (props: any) => {
             triggerSubMenuAction="click"
             items={getMenuItems()}
             onClick={(info) => {
-              if (document.body.clientWidth < 577) {
+              if (document.body.clientWidth < 576) {
                 setSidebarCollapsed(true);
               }
               router.push(info.key);

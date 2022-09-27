@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Report } from "@prisma/client";
 import moment from "moment";
 import isApartmentTaxPaid from "../../utils/isApartmentTaxPaid";
+import ApartmentInfo from "../../components/ApartmentInfo";
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -166,13 +167,8 @@ const AdminPage: NextPage = () => {
             }}
           >
             <Popover
-              content={
-                <div css={{ textAlign: "center" }}>
-                  <p>{apartment.occupant}</p>
-                  <a href={`tel:${apartment.phone}`}>{apartment.phone}</a>
-                </div>
-              }
-              title={translate.AdminPage.information}
+              content={<ApartmentInfo apartment={apartment} />}
+              title={translate.Globals.information}
               trigger="click"
             >
               <div

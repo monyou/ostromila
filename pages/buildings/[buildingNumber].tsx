@@ -7,9 +7,15 @@ import useMakeAjaxRequest from "../../utils/makeAjaxRequest";
 import type { BuildingFull } from "../api/building";
 import { useCallback, useEffect, useState } from "react";
 import isApartmentTaxPaid from "../../utils/isApartmentTaxPaid";
-import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
+import {
+  CheckCircleFilled,
+  CloseCircleFilled,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import type { Report } from "@prisma/client";
 import { socket } from "../../layouts/MainLayout";
+import { Popover } from "antd";
+import ApartmentInfo from "../../components/ApartmentInfo";
 
 const Tile = styled("div")({
   borderRadius: 10,
@@ -95,9 +101,28 @@ const BuildingPage: NextPage = () => {
               padding: 10,
               borderBottom: "solid 1px lightgray",
               ":last-of-type": { paddingBottom: 0, border: "none" },
+              ":hover .info-icon": {
+                color: "coral",
+              },
             }}
           >
             <div>
+              <Popover
+                content={<ApartmentInfo apartment={apartment} />}
+                title={translate.Globals.information}
+                trigger="click"
+                placement="right"
+              >
+                <InfoCircleOutlined
+                  className="info-icon"
+                  css={{
+                    cursor: "pointer",
+                    transition: "all .5s",
+                    marginRight: 5,
+                    fontSize: "1.3em",
+                  }}
+                />
+              </Popover>
               {translate.BuildingPage(buildingNumber as string).apartment}{" "}
               {apartment.number}
             </div>
@@ -137,14 +162,15 @@ const BuildingPage: NextPage = () => {
           gap: 10,
           height: "calc(100vh - 115px)",
           gridTemplateAreas: `
-            "report admins"
-            "report news"
+            "report admins prevMonthReport"
+            "report news news"
           `,
           gridTemplateRows: "max-content 1fr",
           "@media (max-width: 778px)": {
             height: "auto",
             gridTemplateAreas: `
               "admins"
+              "prevMonthReport"
               "report"
               "news"
             `,
@@ -159,6 +185,18 @@ const BuildingPage: NextPage = () => {
               {admin.admin.name}
             </div>
           ))}
+        </Tile>
+        <Tile
+          css={{
+            gridArea: "prevMonthReport",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {
+            translate.BuildingPage(buildingNumber as string)
+              .prevMonthReportNotReady
+          }
         </Tile>
         <Tile css={{ gridArea: "report" }}>{renderApartments()}</Tile>
         <Tile css={{ gridArea: "news" }}>
