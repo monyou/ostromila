@@ -48,7 +48,7 @@ const MainLayout = (props: any) => {
       {
         label: translate.MainLayout.MenuItem3,
         icon: <ToolOutlined />,
-        key: "/admin/login",
+        key: "/admin",
       },
     ];
 

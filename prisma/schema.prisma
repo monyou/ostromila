@@ -7,30 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id        String          @id @default(auto()) @map("_id") @db.ObjectId
-  username  String          @unique
-  password  String
-  name      String
-  type      AdminType
-  buildings AdminBuilding[]
+model User {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  username        String         @unique
+  password        String
+  name            String?
+  apartmentNumber Int?
+  type            UserType
+  buildings       UserBuilding[]
 }
 
-model AdminBuilding {
+model UserBuilding {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   buildingId String   @db.ObjectId
-  adminId    String   @db.ObjectId
-  admin      Admin    @relation(fields: [adminId], references: [id])
+  userId     String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
   building   Building @relation(fields: [buildingId], references: [id])
 }
 
 model Building {
-  id         String          @id @default(auto()) @map("_id") @db.ObjectId
-  number     Int             @unique
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  number     Int            @unique
   apartments Apartment[]
   reports    Report[]
   messages   Message[]
-  admins     AdminBuilding[]
+  users      UserBuilding[]
 }
 
 model Apartment {
@@ -61,7 +62,8 @@ model Message {
   buildingId String   @db.ObjectId
 }
 
-enum AdminType {
+enum UserType {
   HouseManager
   Cashier
+  Guest
 }

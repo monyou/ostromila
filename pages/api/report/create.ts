@@ -1,6 +1,6 @@
 import type { ApiResponse } from "../../../utils/makeAjaxRequest";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { Report } from "@prisma/client";
+import { Report, UserType } from "@prisma/client";
 import serverRequest, {
   type RequestHandler,
 } from "../../../utils/serverRequest";
@@ -24,5 +24,8 @@ export default async function handler(
     },
   } as RequestHandler;
 
-  await serverRequest(req, res, reqHandler, true);
+  await serverRequest(req, res, reqHandler, true, [
+    UserType.HouseManager,
+    UserType.Cashier,
+  ]);
 }

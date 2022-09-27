@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import serverRequest, {
   type RequestHandler,
 } from "../../../utils/serverRequest";
-import type { Apartment, Building, Report } from "@prisma/client";
+import { Apartment, Building, Report, UserType } from "@prisma/client";
 
 export type BuildingWithApartmentsAndReports = Building & {
   apartments: Apartment[];
@@ -31,5 +31,8 @@ export default async function handler(
     },
   } as RequestHandler;
 
-  await serverRequest(req, res, reqHandler, true);
+  await serverRequest(req, res, reqHandler, true, [
+    UserType.HouseManager,
+    UserType.Cashier,
+  ]);
 }

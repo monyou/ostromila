@@ -1,8 +1,8 @@
 import type { ApiResponse } from "../../../utils/makeAjaxRequest";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type {
-  Admin,
-  AdminBuilding,
+  User,
+  UserBuilding,
   Apartment,
   Building,
   Report,
@@ -14,7 +14,7 @@ import serverRequest, {
 export type BuildingFull = Building & {
   apartments: Apartment[];
   reports: Report[];
-  admins: (AdminBuilding & { admin: Admin })[];
+  users: (UserBuilding & { user: User })[];
 };
 
 export default async function handler(
@@ -31,9 +31,9 @@ export default async function handler(
         include: {
           apartments: true,
           reports: true,
-          admins: {
+          users: {
             include: {
-              admin: true,
+              user: true,
             },
           },
         },
@@ -47,5 +47,5 @@ export default async function handler(
     },
   } as RequestHandler;
 
-  await serverRequest(req, res, reqHandler);
+  await serverRequest(req, res, reqHandler, true);
 }

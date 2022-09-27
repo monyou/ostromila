@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type UserType } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import authorizeServerReq from "./serverAuth";
 
@@ -11,9 +11,10 @@ const serverRequest = async (
   req: NextApiRequest,
   res: NextApiResponse,
   handler: RequestHandler,
-  auth: boolean = false
+  auth: boolean = false,
+  roles: UserType[] | null = null
 ): Promise<void> => {
-  if (auth && !(await authorizeServerReq(req, res))) return;
+  if (auth && !(await authorizeServerReq(req, res, roles))) return;
 
   try {
     if (!handler[req.method!]) {

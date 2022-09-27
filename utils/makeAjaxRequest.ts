@@ -52,7 +52,7 @@ function useMakeAjaxRequest<T>(
         switch (json.Exception) {
           case "403":
             sessionStorage.removeItem(AUTH_USER_SESSION);
-            router.replace("/admin/login");
+            router.replace("/login");
             break;
         }
         toast.error(translate.ApiErrors[json.Exception]);

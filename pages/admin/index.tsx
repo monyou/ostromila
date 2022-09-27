@@ -7,7 +7,7 @@ import { FilePdfOutlined } from "@ant-design/icons";
 import useMakeAjaxRequest from "../../utils/makeAjaxRequest";
 import type { BuildingWithApartmentsAndReports } from "../api/building/all";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { Report } from "@prisma/client";
+import { type Report, UserType } from "@prisma/client";
 import moment from "moment";
 import isApartmentTaxPaid from "../../utils/isApartmentTaxPaid";
 import ApartmentInfo from "../../components/ApartmentInfo";
@@ -276,4 +276,4 @@ const AdminPage: NextPage = () => {
   );
 };
 
-export default withAuth(AdminPage);
+export default withAuth(AdminPage, [UserType.HouseManager, UserType.Cashier]);

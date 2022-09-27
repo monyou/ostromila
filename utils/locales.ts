@@ -12,6 +12,9 @@ export type Locale = {
     text: string;
     go_back: string;
   };
+  AccessDeniedPage: LocaleMetaInfo & {
+    title: string;
+  };
   BuildingPage: (buildingNumber: string) => LocaleMetaInfo & {
     title: string;
     apartment: string;
@@ -36,7 +39,7 @@ export type Locale = {
       monthly_btn: string;
     };
   };
-  AdminLoginPage: LocaleMetaInfo & {
+  LoginPage: LocaleMetaInfo & {
     title: string;
     username: {
       label: string;
@@ -55,9 +58,10 @@ export type Locale = {
   };
   Globals: {
     short_month_names: string[];
-    admin_types: {
+    user_types: {
       HouseManager: string;
       Cashier: string;
+      Guest: string;
     };
     information: string;
   };
@@ -77,6 +81,11 @@ const locales: Record<string, Locale> = {
       text_logo: "404",
       text: "Няма какво да се види тук,",
       go_back: "ВЪРНИ СЕ",
+    },
+    AccessDeniedPage: {
+      meta_title: "403",
+      meta_content: "Страницата не е намерена",
+      title: "Забранено",
     },
     BuildingPage: (buildingNumber) => ({
       meta_title: `Блок ${buildingNumber} | Инфо`,
@@ -107,10 +116,10 @@ const locales: Record<string, Locale> = {
       tax_title: (tax) => `Такса ${tax} лв.`,
       unpaid: "Неплатено",
     },
-    AdminLoginPage: {
-      meta_title: "Админ | Вход",
-      meta_content: "Страница за вход на администратора",
-      title: "Вход за Администратори",
+    LoginPage: {
+      meta_title: "Вход",
+      meta_content: "Страница за вход на потребители",
+      title: "Вход",
       username: {
         label: "Потребителско име",
         error: "Моля въведете потребителско име!",
@@ -141,14 +150,15 @@ const locales: Record<string, Locale> = {
         "Ноем",
         "Дек",
       ],
-      admin_types: {
+      user_types: {
         HouseManager: "Домоуправител",
         Cashier: "Касиер",
+        Guest: "Гост",
       },
       information: "Информация",
     },
     ApiErrors: {
-      "403": "Забранен достъп. Влезте в профила си.",
+      "403": "Забранен достъп",
       "405": "Неправилен метод",
       "500": "Сървърна грешка",
 

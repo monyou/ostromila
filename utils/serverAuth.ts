@@ -1,9 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserType } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const authorizeServerReq = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
+  roles: UserType[] | null
 ): Promise<boolean> => {
   try {
     const { username, password } = JSON.parse(
@@ -11,7 +12,7 @@ const authorizeServerReq = async (
     );
     const prisma = new PrismaClient();
     await prisma.$connect();
-    const user = await prisma.admin.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         username,
         password,
@@ -19,7 +20,7 @@ const authorizeServerReq = async (
     });
     await prisma.$disconnect();
 
-    if (!user) {
+    if (!user || (roles && !roles.includes(user.type))) {
       res.status(403).json({
         Exception: "403",
         Success: false,

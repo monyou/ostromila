@@ -12,10 +12,11 @@ import {
   CloseCircleFilled,
   InfoCircleOutlined,
 } from "@ant-design/icons";
-import type { Report } from "@prisma/client";
+import { type Report, UserType } from "@prisma/client";
 import { socket } from "../../layouts/MainLayout";
 import { Popover } from "antd";
 import ApartmentInfo from "../../components/ApartmentInfo";
+import withAuth from "../../utils/withAuth";
 
 const Tile = styled("div")({
   borderRadius: 10,
@@ -179,12 +180,13 @@ const BuildingPage: NextPage = () => {
         }}
       >
         <Tile css={{ gridArea: "admins" }}>
-          {building?.admins?.map((admin) => (
-            <div key={admin.id}>
-              {translate.Globals.admin_types[admin.admin.type]}:{" "}
-              {admin.admin.name}
-            </div>
-          ))}
+          {building?.users
+            ?.filter((user) => user.user.type !== UserType.Guest)
+            .map((user) => (
+              <div key={user.id}>
+                {translate.Globals.user_types[user.user.type]}: {user.user.name}
+              </div>
+            ))}
         </Tile>
         <Tile
           css={{
@@ -207,4 +209,4 @@ const BuildingPage: NextPage = () => {
   );
 };
 
-export default BuildingPage;
+export default withAuth(BuildingPage);
