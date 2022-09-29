@@ -31,6 +31,7 @@ const BuildingPage: NextPage = () => {
     state: { translate },
   } = useGlobalContext();
   const {
+    push,
     query: { buildingNumber },
   } = useRouter();
 
@@ -42,14 +43,24 @@ const BuildingPage: NextPage = () => {
     });
 
   useEffect(() => {
-    if (!Number(buildingNumber)) return;
+    if (!buildingNumber) return;
+
+    if (!Number(buildingNumber)) {
+      push("/404");
+      return;
+    }
 
     const getData = async () => {
       const data = await fetchBuilding({
         url: `/building?buildingNumber=${buildingNumber}`,
       });
 
-      setBuilding(data!);
+      if (!data) {
+        push("/404");
+        return;
+      }
+
+      setBuilding(data);
     };
 
     getData();

@@ -7,6 +7,8 @@ export type RequestHandler = Record<
   (prisma: PrismaClient) => Promise<void>
 >;
 
+export let prisma: PrismaClient | null = null;
+
 const serverRequest = async (
   req: NextApiRequest,
   res: NextApiResponse,
@@ -31,12 +33,11 @@ const serverRequest = async (
       return;
     }
 
-    const prisma = new PrismaClient();
-    await prisma.$connect();
+    if (!prisma) {
+      prisma = new PrismaClient();
+    }
 
-    handler[req.method!](prisma);
-
-    await prisma.$disconnect();
+    await handler[req.method!](prisma);
   } catch (error) {
     res.status(500).json({
       Exception: "500",
