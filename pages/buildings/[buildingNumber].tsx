@@ -184,7 +184,8 @@ const BuildingPage: NextPage = () => {
             ?.filter((user) => user.user.type !== UserType.Guest)
             .map((user) => (
               <div key={user.id}>
-                {translate.Globals.user_types[user.user.type]}: {user.user.name}
+                <b>{translate.Globals.user_types[user.user.type]}</b>:{" "}
+                {user.user.name}
               </div>
             ))}
         </Tile>
@@ -192,7 +193,6 @@ const BuildingPage: NextPage = () => {
           css={{
             gridArea: "prevMonthReport",
             display: "flex",
-            alignItems: "center",
           }}
         >
           {
@@ -202,7 +202,7 @@ const BuildingPage: NextPage = () => {
         </Tile>
         <Tile css={{ gridArea: "report" }}>{renderApartments()}</Tile>
         <Tile css={{ gridArea: "news" }}>
-          {translate.BuildingPage(buildingNumber as string).news}
+          <h4>{translate.BuildingPage(buildingNumber as string).news}</h4>
         </Tile>
       </div>
     </div>

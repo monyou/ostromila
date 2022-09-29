@@ -84,7 +84,7 @@ const MainLayout = (props: any) => {
             }}
             css={{ cursor: "pointer", textAlign: "center", padding: 5 }}
           >
-            <Image src={logoImg} alt="logo" width={107} height={80} />
+            <Image src={logoImg} alt="logo" width={160} height={80} />
           </div>
           <Menu
             theme="dark"

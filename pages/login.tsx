@@ -76,8 +76,8 @@ const LoginPage: NextPage = () => {
 
       <Form
         css={{ marginTop: 20 }}
-        labelCol={{ span: 10 }}
-        wrapperCol={{ xxl: { span: 5 }, sm: { span: 10 } }}
+        layout={"vertical"}
+        wrapperCol={{ md: { span: 15 }, xl: { span: 10 }, xxl: { span: 5 } }}
         labelWrap
         name="login_form"
         initialValues={{ remember: true }}
@@ -110,7 +110,7 @@ const LoginPage: NextPage = () => {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 10, span: 14 }}>
+        <Form.Item>
           <Button type="primary" htmlType="submit">
             {translate.LoginPage.submit}
           </Button>

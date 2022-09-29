@@ -14,6 +14,8 @@ export type Locale = {
   };
   AccessDeniedPage: LocaleMetaInfo & {
     title: string;
+    go: string;
+    back: string;
   };
   BuildingPage: (buildingNumber: string) => LocaleMetaInfo & {
     title: string;
@@ -27,6 +29,7 @@ export type Locale = {
     panel: {
       title1: string;
       title2: string;
+      title3: string;
     };
     pick_building: string;
     pick_month: string;
@@ -84,8 +87,11 @@ const locales: Record<string, Locale> = {
     },
     AccessDeniedPage: {
       meta_title: "403",
-      meta_content: "Страницата не е намерена",
-      title: "Забранено",
+      meta_content:
+        "Страницата не може да бъде достъпена тъй като не са налични администраторски права",
+      title: "Нямате достъп до тази страница",
+      go: "Върнете се",
+      back: "ОБРАТНО",
     },
     BuildingPage: (buildingNumber) => ({
       meta_title: `Блок ${buildingNumber} | Инфо`,
@@ -104,6 +110,7 @@ const locales: Record<string, Locale> = {
       panel: {
         title1: "Събиране на такси",
         title2: "Отчети",
+        title3: "Новини",
       },
       apartment_title: (apartmentNumber) => `Ап. ${apartmentNumber}`,
       paid: "Платено",

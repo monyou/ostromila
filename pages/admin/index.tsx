@@ -140,7 +140,6 @@ const AdminPage: NextPage = () => {
     return (
       <div
         css={{
-          marginTop: 30,
           display: "flex",
           flexWrap: "wrap",
           gap: 20,
@@ -211,65 +210,76 @@ const AdminPage: NextPage = () => {
         {translate.AdminPage.title}
       </h1>
 
-      <Collapse defaultActiveKey={["1"]} ghost>
+      <div
+        css={{
+          display: "flex",
+          justifyContent: "center",
+          "@media (max-width:460px)": {
+            flexDirection: "column",
+            alignItems: "center",
+          },
+          margin: "20px 0px",
+        }}
+      >
+        <Select
+          css={{
+            width: 144,
+            marginRight: 4,
+            "@media (max-width:460px)": {
+              marginRight: 0,
+              marginBottom: 4,
+            },
+          }}
+          bordered={false}
+          onChange={(value) => setSelectedBuildingId(value)}
+          placeholder={translate.AdminPage.pick_building}
+        >
+          {buildings?.map((building) => (
+            <Option key={building.id} value={building.id}>
+              {building.number}
+            </Option>
+          ))}
+        </Select>
+        <DatePicker
+          bordered={false}
+          css={{
+            width: 160,
+          }}
+          value={period ? moment(period) : null}
+          onChange={(value) => setPeriod(value ? value.toDate() : null)}
+          placeholder={translate.AdminPage.pick_month}
+          picker="month"
+        />
+      </div>
+
+      <Collapse ghost>
         <Panel header={translate.AdminPage.panel.title1} key="1">
-          <div
-            css={{
-              display: "flex",
-              justifyContent: "center",
-              "@media (max-width:460px)": {
-                flexDirection: "column",
-                alignItems: "center",
-              },
-            }}
-          >
-            <Select
-              css={{
-                width: 144,
-                marginRight: 4,
-                "@media (max-width:460px)": {
-                  marginRight: 0,
-                  marginBottom: 4,
-                },
-              }}
-              onChange={(value) => setSelectedBuildingId(value)}
-              placeholder={translate.AdminPage.pick_building}
-            >
-              {buildings?.map((building) => (
-                <Option key={building.id} value={building.id}>
-                  {building.number}
-                </Option>
-              ))}
-            </Select>
-            <DatePicker
-              css={{
-                width: 160,
-              }}
-              value={period ? moment(period) : null}
-              onChange={(value) => setPeriod(value ? value.toDate() : null)}
-              placeholder={translate.AdminPage.pick_month}
-              picker="month"
-            />
-          </div>
           {renderApartments()}
         </Panel>
         <Panel header={translate.AdminPage.panel.title2} key="2">
-          <Button
-            css={{ marginBottom: 16, display: "block" }}
-            type="primary"
-            icon={<FilePdfOutlined />}
-            onClick={() => handleReportCreation("monthly")}
-          >
-            {translate.AdminPage.reports.monthly_btn}
-          </Button>
-          <Button
-            css={{ display: "block" }}
-            type="primary"
-            icon={<FilePdfOutlined />}
-            onClick={() => handleReportCreation("yearly")}
-          >
-            {translate.AdminPage.reports.yearly_btn}
-          </Button>
+          {period ? (
+            <>
+              <Button
+                css={{ marginBottom: 16, display: "block" }}
+                type="primary"
+                icon={<FilePdfOutlined />}
+                onClick={() => handleReportCreation("monthly")}
+              >
+                {translate.AdminPage.reports.monthly_btn}
+              </Button>
+              <Button
+                css={{ display: "block" }}
+                type="primary"
+                icon={<FilePdfOutlined />}
+                onClick={() => handleReportCreation("yearly")}
+              >
+                {translate.AdminPage.reports.yearly_btn}
+              </Button>
+            </>
+          ) : null}
+        </Panel>
+        <Panel header={translate.AdminPage.panel.title3} key="3">
+          Тест
         </Panel>
       </Collapse>
     </div>

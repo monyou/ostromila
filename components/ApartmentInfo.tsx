@@ -7,7 +7,6 @@ const ApartmentInfo = ({ apartment }: { apartment: Apartment }) => {
       css={{
         display: "flex",
         flexFlow: "column nowrap",
-        alignItems: "center",
         gap: 5,
       }}
     >
