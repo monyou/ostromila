@@ -42,7 +42,7 @@ const Custom403: NextPage = () => {
     <div
       id="access-denied-page"
       css={{
-        fontFamily: "Poppins, sans-serif",
+        fontFamily: "Bungee, cursive",
         paddingTop: 150,
         textAlign: "center",
 
@@ -70,7 +70,7 @@ const Custom403: NextPage = () => {
             <circle id="white-eye" fill="#cacaca" cx="130" cy="65" r="20" />{" "}
           </clipPath>
           <text
-            css={{ fontSize: 120, fontFamily: "Bungee, cursive" }}
+            css={{ fontSize: 120 }}
             id="text-s"
             className="error-text"
             y="106"
@@ -128,8 +128,10 @@ const Custom403: NextPage = () => {
           <use xlinkHref="#tornillo" y="60"></use>
         </g>
       </svg>
-      <h1>{translate.AccessDeniedPage.title}</h1>
-      <h3>
+      <h1 css={{ fontFamily: "Poppins, sans-serif" }}>
+        {translate.AccessDeniedPage.title}
+      </h1>
+      <h3 css={{ fontFamily: "Poppins, sans-serif" }}>
         {translate.AccessDeniedPage.go}{" "}
         <span
           css={{

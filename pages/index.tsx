@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { relative } from "path";
 import useGlobalContext from "../contexts/global";
 
 const HomePage: NextPage = () => {

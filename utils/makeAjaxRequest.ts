@@ -2,14 +2,14 @@ import { useRouter } from "next/router";
 import { useEffect, useState, useCallback } from "react";
 import useGlobalContext, { type GlobalState } from "../contexts/global";
 import { toast } from "react-toastify";
+import { deleteCookie } from "./withAuth";
+import { AUTH_TOKEN } from "../pages/_app";
 
 export type ApiResponse<T> = {
   Exception: string;
   Result: T;
   Success: boolean;
 };
-
-export const AUTH_USER_SESSION = "ostromila_auth_user";
 
 const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -30,14 +30,11 @@ function useMakeAjaxRequest<T>(
   const makeRequest = useCallback(
     async (innerOptions: { url?: string; params?: RequestInit } = {}) => {
       dispatch({ loading: true } as GlobalState);
-      const authUser = sessionStorage.getItem(AUTH_USER_SESSION);
       const response = await fetch(
         baseUrl + (innerOptions.url || options.url)!,
         {
           method: "get",
-          headers: {
-            Authorization: authUser,
-          } as HeadersInit,
+          credentials: "include",
           ...options.params,
           ...innerOptions.params,
         }
@@ -51,7 +48,7 @@ function useMakeAjaxRequest<T>(
       } else {
         switch (json.Exception) {
           case "403":
-            sessionStorage.removeItem(AUTH_USER_SESSION);
+            deleteCookie(AUTH_TOKEN!);
             router.replace("/login");
             break;
         }

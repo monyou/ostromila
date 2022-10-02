@@ -7,7 +7,7 @@ export type RequestHandler = Record<
   (prisma: PrismaClient) => Promise<void>
 >;
 
-export let prisma: PrismaClient | null = null;
+export let prisma: PrismaClient;
 
 const serverRequest = async (
   req: NextApiRequest,
@@ -16,6 +16,18 @@ const serverRequest = async (
   auth: boolean = false,
   roles: UserType[] | null = null
 ): Promise<void> => {
+  if (process.env.NODE_ENV === "production") {
+    prisma = new PrismaClient();
+  } else {
+    //@ts-ignore
+    if (!global.prisma) {
+      //@ts-ignore
+      global.prisma = new PrismaClient();
+    }
+    //@ts-ignore
+    prisma = global.prisma;
+  }
+
   if (auth && !(await authorizeServerReq(req, res, roles))) return;
 
   try {
@@ -31,10 +43,6 @@ const serverRequest = async (
     if (req.method === "OPTIONS") {
       res.status(200).send("ok");
       return;
-    }
-
-    if (!prisma) {
-      prisma = new PrismaClient();
     }
 
     await handler[req.method!](prisma);

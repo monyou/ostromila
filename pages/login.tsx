@@ -1,17 +1,25 @@
-import type { NextPage } from "next";
+import type { NextApiRequest, NextPage } from "next";
 import Head from "next/head";
 import useGlobalContext from "../contexts/global";
-import useMakeAjaxRequest, {
-  AUTH_USER_SESSION,
-} from "../utils/makeAjaxRequest";
+import useMakeAjaxRequest from "../utils/makeAjaxRequest";
 import { Button, Form, Input } from "antd";
 import { LoggedUser } from "./api/login";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getLoggedInUser } from "../utils/withAuth";
 import { UserType } from "@prisma/client";
+import { setCookie } from "../utils/withAuth";
+import { AUTH_TOKEN } from "./_app";
+import jwt from "jsonwebtoken";
 
-const LoginPage: NextPage = () => {
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  return {
+    props: {
+      token: req.cookies[AUTH_TOKEN!] || null,
+    },
+  };
+};
+
+const LoginPage: NextPage<{ token: string }> = ({ token }) => {
   const [seePage, setSeePage] = useState(false);
   const {
     state: { translate },
@@ -26,15 +34,20 @@ const LoginPage: NextPage = () => {
   });
 
   useEffect(() => {
-    const user = getLoggedInUser();
-    if (user) {
-      if (user.type !== UserType.Guest) {
-        router.replace("/admin");
-      } else {
-        router.replace("/buildings/144");
-      }
-    } else {
+    if (!token) {
       setSeePage(true);
+      return;
+    }
+
+    const { type } = jwt.verify(
+      token,
+      process.env.NEXT_PUBLIC_AUTH_TOKEN_SECRET!
+    ) as { type: UserType };
+
+    if (type !== UserType.Guest) {
+      router.replace("/admin");
+    } else {
+      router.replace("/buildings/144");
     }
   }, []);
 
@@ -49,10 +62,7 @@ const LoginPage: NextPage = () => {
 
     if (!user) return;
 
-    sessionStorage.setItem(
-      AUTH_USER_SESSION,
-      JSON.stringify({ ...user, ...values })
-    );
+    setCookie(AUTH_TOKEN!, user.token, 7);
 
     if (user.type !== UserType.Guest) {
       router.replace("/admin");
