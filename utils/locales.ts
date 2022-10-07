@@ -41,6 +41,21 @@ export type Locale = {
       yearly_btn: string;
       monthly_btn: string;
     };
+    news: {
+      placeholders: {
+        buildings: string;
+        title: string;
+        content: string;
+      };
+      errors: {
+        buildings: string;
+        title: string;
+        content: string;
+      };
+      submit: string;
+      success_msg: string;
+      error_msg: string;
+    };
   };
   LoginPage: LocaleMetaInfo & {
     title: string;
@@ -122,6 +137,21 @@ const locales: Record<string, Locale> = {
       },
       tax_title: (tax) => `Такса ${tax} лв.`,
       unpaid: "Неплатено",
+      news: {
+        placeholders: {
+          buildings: "Изберете блок/ове за новината",
+          title: "Заглавие на съобщението",
+          content: "Съдържание на съобщението",
+        },
+        errors: {
+          buildings: "Моля изберете блок/ове",
+          title: "Моля въведете заглавие",
+          content: "Моля въведете съдържание",
+        },
+        submit: "Създай",
+        success_msg: "Новината е създадена успешно",
+        error_msg: "Новината НЕ може да се създаде",
+      },
     },
     LoginPage: {
       meta_title: "Вход",

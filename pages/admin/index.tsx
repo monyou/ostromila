@@ -1,16 +1,32 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import useGlobalContext from "../../contexts/global";
-import withAuth from "../../utils/withAuth";
-import { Button, Collapse, Popover, Select, Switch, DatePicker } from "antd";
+import withAuth, { getCookie } from "../../utils/withAuth";
+import {
+  Button,
+  Collapse,
+  Popover,
+  Select,
+  Switch,
+  DatePicker,
+  Input,
+  Form,
+  type FormInstance,
+} from "antd";
 import { FilePdfOutlined } from "@ant-design/icons";
 import useMakeAjaxRequest from "../../utils/makeAjaxRequest";
 import type { BuildingWithApartmentsAndReports } from "../api/building/all";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { type Report, UserType } from "@prisma/client";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type Report, UserType, type Message } from "@prisma/client";
 import moment from "moment";
 import isApartmentTaxPaid from "../../utils/isApartmentTaxPaid";
 import ApartmentInfo from "../../components/ApartmentInfo";
+import dynamic from "next/dynamic";
+import { toast } from "react-toastify";
+import { AUTH_TOKEN } from "../_app";
+import jwt from "jsonwebtoken";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -20,17 +36,12 @@ const AdminPage: NextPage = () => {
     state: { translate },
   } = useGlobalContext();
 
-  useEffect(() => {
-    moment.updateLocale("en", {
-      monthsShort: translate.Globals.short_month_names,
-    });
-  }, [translate]);
-
   const [buildings, setBuildings] = useState<
     BuildingWithApartmentsAndReports[]
   >([]);
   const [selectedBuildingId, setSelectedBuildingId] = useState<string>();
   const [period, setPeriod] = useState<Date | null>(new Date());
+  const newMessageFormRef = useRef<FormInstance>(null);
   const building = useMemo(
     () =>
       buildings.find((building) => building.id === selectedBuildingId) ||
@@ -53,6 +64,19 @@ const AdminPage: NextPage = () => {
     lazy: true,
     params: { method: "put" },
   });
+  const { makeRequest: createMessage } = useMakeAjaxRequest<Message>({
+    url: "/message/create",
+    lazy: true,
+    params: {
+      method: "post",
+    },
+  });
+
+  useEffect(() => {
+    moment.updateLocale("en", {
+      monthsShort: translate.Globals.short_month_names,
+    });
+  }, [translate]);
 
   useEffect(() => {
     setBuildings(buildingsFromApi || []);
@@ -128,6 +152,35 @@ const AdminPage: NextPage = () => {
     type: "monthly" | "yearly"
   ): Promise<void> => {
     //TODO
+  };
+
+  const handleSubmitNewMessage = async (values: {
+    buildings: string[];
+    title: string;
+    content: string;
+  }): Promise<void> => {
+    const { id: userId } = jwt.verify(
+      getCookie(AUTH_TOKEN!)!,
+      process.env.NEXT_PUBLIC_AUTH_TOKEN_SECRET!
+    ) as { id: string };
+
+    const body = {
+      ...values,
+      createdById: userId,
+    };
+
+    const result = await createMessage({
+      params: { body: JSON.stringify(body) },
+    });
+
+    toast(
+      result
+        ? translate.AdminPage.news.success_msg
+        : translate.AdminPage.news.error_msg,
+      { type: result ? "success" : "error" }
+    );
+
+    newMessageFormRef.current?.resetFields();
   };
 
   const renderApartments = useCallback(() => {
@@ -210,50 +263,49 @@ const AdminPage: NextPage = () => {
         {translate.AdminPage.title}
       </h1>
 
-      <div
-        css={{
-          display: "flex",
-          justifyContent: "center",
-          "@media (max-width:460px)": {
-            flexDirection: "column",
-            alignItems: "center",
-          },
-          margin: "20px 0px",
-        }}
-      >
-        <Select
-          css={{
-            width: 144,
-            marginRight: 4,
-            "@media (max-width:460px)": {
-              marginRight: 0,
-              marginBottom: 4,
-            },
-          }}
-          bordered={false}
-          onChange={(value) => setSelectedBuildingId(value)}
-          placeholder={translate.AdminPage.pick_building}
-        >
-          {buildings?.map((building) => (
-            <Option key={building.id} value={building.id}>
-              {building.number}
-            </Option>
-          ))}
-        </Select>
-        <DatePicker
-          bordered={false}
-          css={{
-            width: 160,
-          }}
-          value={period ? moment(period) : null}
-          onChange={(value) => setPeriod(value ? value.toDate() : null)}
-          placeholder={translate.AdminPage.pick_month}
-          picker="month"
-        />
-      </div>
-
       <Collapse ghost>
         <Panel header={translate.AdminPage.panel.title1} key="1">
+          <div
+            css={{
+              display: "flex",
+              justifyContent: "center",
+              "@media (max-width:460px)": {
+                flexDirection: "column",
+                alignItems: "center",
+              },
+              margin: "20px 0px",
+            }}
+          >
+            <Select
+              css={{
+                width: 144,
+                marginRight: 4,
+                "@media (max-width:460px)": {
+                  marginRight: 0,
+                  marginBottom: 4,
+                },
+              }}
+              bordered={false}
+              onChange={(value) => setSelectedBuildingId(value)}
+              placeholder={translate.AdminPage.pick_building}
+            >
+              {buildings?.map((building) => (
+                <Option key={building.id} value={building.id}>
+                  {building.number}
+                </Option>
+              ))}
+            </Select>
+            <DatePicker
+              bordered={false}
+              css={{
+                width: 160,
+              }}
+              value={period ? moment(period) : null}
+              onChange={(value) => setPeriod(value ? value.toDate() : null)}
+              placeholder={translate.AdminPage.pick_month}
+              picker="month"
+            />
+          </div>
           {renderApartments()}
         </Panel>
         <Panel header={translate.AdminPage.panel.title2} key="2">
@@ -279,7 +331,83 @@ const AdminPage: NextPage = () => {
           ) : null}
         </Panel>
         <Panel header={translate.AdminPage.panel.title3} key="3">
-          Тест
+          <div>
+            <h3 css={{ marginBottom: 20 }}>Създаване на новина</h3>
+            <Form
+              ref={newMessageFormRef}
+              name="new-message-form"
+              onFinish={handleSubmitNewMessage}
+              autoComplete="off"
+            >
+              <Form.Item
+                name="buildings"
+                rules={[
+                  {
+                    required: true,
+                    message: translate.AdminPage.news.errors.buildings,
+                  },
+                ]}
+              >
+                <Select
+                  mode="multiple"
+                  allowClear
+                  placeholder={translate.AdminPage.news.placeholders.buildings}
+                >
+                  {buildings?.map((building) => (
+                    <Option key={`news-${building.id}`} value={building.id}>
+                      {building.number}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="title"
+                rules={[
+                  {
+                    required: true,
+                    message: translate.AdminPage.news.errors.title,
+                  },
+                ]}
+              >
+                <Input
+                  placeholder={translate.AdminPage.news.placeholders.title}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="content"
+                rules={[
+                  {
+                    required: true,
+                    message: translate.AdminPage.news.errors.content,
+                  },
+                ]}
+              >
+                <ReactQuill
+                  theme="snow"
+                  modules={{
+                    toolbar: [
+                      [{ size: [] }],
+                      ["bold", "italic", "underline", "strike"],
+                      [{ align: [] }, { indent: "-1" }, { indent: "+1" }],
+                      [{ color: [] }, { background: [] }],
+                      [{ list: "ordered" }, { list: "bullet" }],
+                      ["link"],
+                      ["clean"],
+                    ],
+                  }}
+                  placeholder={translate.AdminPage.news.placeholders.content}
+                />
+              </Form.Item>
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  {translate.AdminPage.news.submit}
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
         </Panel>
       </Collapse>
     </div>

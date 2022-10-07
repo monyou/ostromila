@@ -31,7 +31,7 @@ export default async function handler(
 
       if (user) {
         const token = jwt.sign(
-          { username, password, type: user.type },
+          { id: user.id, username, password, type: user.type },
           process.env.NEXT_PUBLIC_AUTH_TOKEN_SECRET!
         );
         res.status(200).json({

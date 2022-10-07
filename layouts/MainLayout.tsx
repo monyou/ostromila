@@ -30,6 +30,36 @@ const MainLayout = (props: any) => {
       socket = io();
     };
 
+    setTimeout(() => {
+      const content = document.querySelector(
+        ".ant-layout-content"
+      ) as HTMLElement;
+
+      document
+        .querySelector(".ant-layout-sider")
+        ?.addEventListener("click", (e) => {
+          if (document.body.clientWidth > 576) return;
+
+          const clicked = e.target as HTMLElement;
+
+          if (
+            !clicked.classList.contains(
+              "ant-layout-sider-zero-width-trigger"
+            ) &&
+            !clicked.classList.contains("ant-menu-title-content") &&
+            clicked.getAttribute("id") !== "logo" &&
+            clicked.getAttribute("alt") !== "logo"
+          )
+            return;
+
+          if (document.querySelector(".ant-layout-sider-zero-width")) {
+            content.style.zIndex = "-1";
+          } else {
+            content.style.zIndex = "initial";
+          }
+        });
+    }, 50);
+
     openWS();
   }, []);
 
@@ -76,17 +106,19 @@ const MainLayout = (props: any) => {
           onCollapse={(value) => setSidebarCollapsed(value)}
         >
           <div
+            id="logo"
             onClick={() => {
               if (document.body.clientWidth < 576) {
                 setSidebarCollapsed(true);
               }
               router.push("/");
             }}
-            css={{ cursor: "pointer", textAlign: "center", padding: 5 }}
+            css={{ cursor: "pointer", position: "relative", top: -45 }}
           >
-            <Image src={logoImg} alt="logo" width={160} height={80} />
+            <Image src={logoImg} alt="logo" />
           </div>
           <Menu
+            css={{ position: "relative", top: -90 }}
             theme="dark"
             mode="inline"
             selectedKeys={[router?.asPath || ""]}

@@ -47,6 +47,7 @@ const serverRequest = async (
 
     await handler[req.method!](prisma);
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       Exception: "500",
       Success: false,

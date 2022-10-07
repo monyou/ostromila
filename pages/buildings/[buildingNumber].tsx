@@ -14,9 +14,12 @@ import {
 } from "@ant-design/icons";
 import { type Report, UserType } from "@prisma/client";
 import { socket } from "../../layouts/MainLayout";
-import { Popover } from "antd";
+import { Popover, Collapse } from "antd";
 import ApartmentInfo from "../../components/ApartmentInfo";
 import withAuth from "../../utils/withAuth";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
+import type { MessageFull } from "../api/message/all";
 
 const Tile = styled("div")({
   borderRadius: 10,
@@ -36,9 +39,14 @@ const BuildingPage: NextPage = () => {
   } = useRouter();
 
   const [building, setBuilding] = useState<BuildingFull>();
+  const [messages, setMessages] = useState<MessageFull[]>();
 
   const { response: buildingFromApi, makeRequest: fetchBuilding } =
     useMakeAjaxRequest<BuildingFull>({
+      lazy: true,
+    });
+  const { response: messagesFromApi, makeRequest: fetchMessages } =
+    useMakeAjaxRequest<MessageFull[]>({
       lazy: true,
     });
 
@@ -54,12 +62,16 @@ const BuildingPage: NextPage = () => {
       const data = await fetchBuilding({
         url: `/building?buildingNumber=${buildingNumber}`,
       });
+      const messageData = await fetchMessages({
+        url: `/message?buildingNumber=${buildingNumber}`,
+      });
 
-      if (!data) {
+      if (!data || !messageData) {
         push("/404");
         return;
       }
 
+      setMessages(messageData);
       setBuilding(data);
     };
 
@@ -86,9 +98,26 @@ const BuildingPage: NextPage = () => {
     [building]
   );
 
+  const handleNewMessage = useCallback(
+    (data: any) => {
+      const message = data.message as MessageFull;
+
+      if (!message.buildings.some((b) => b.buildingId === building?.id)) {
+        setMessages(messagesFromApi);
+        return;
+      }
+
+      const copy = [...messages!];
+      copy.push(message);
+      setMessages(copy);
+    },
+    [building]
+  );
+
   useEffect(() => {
     socket?.on("new_report", handleNewReport);
-  }, [socket, handleNewReport]);
+    socket?.on("new_message", handleNewMessage);
+  }, [socket, handleNewReport, handleNewMessage]);
 
   const renderApartments = useCallback(() => {
     if (!building) return null;
@@ -183,8 +212,8 @@ const BuildingPage: NextPage = () => {
             gridTemplateAreas: `
               "admins"
               "prevMonthReport"
-              "report"
               "news"
+              "report"
             `,
             gridTemplateRows: "max-content 1fr max-content",
           },
@@ -214,6 +243,27 @@ const BuildingPage: NextPage = () => {
         <Tile css={{ gridArea: "report" }}>{renderApartments()}</Tile>
         <Tile css={{ gridArea: "news" }}>
           <h4>{translate.BuildingPage(buildingNumber as string).news}</h4>
+          {messages ? (
+            <Collapse ghost>
+              {messages.map((message) => (
+                <Collapse.Panel header={message.title} key={message.id}>
+                  <div
+                    css={{
+                      padding: 5,
+                      border: "1px solid lightgray",
+                      borderRadius: 10,
+                    }}
+                  >
+                    {parse(
+                      DOMPurify.sanitize(message.content, {
+                        USE_PROFILES: { html: true },
+                      })
+                    )}
+                  </div>
+                </Collapse.Panel>
+              ))}
+            </Collapse>
+          ) : null}
         </Tile>
       </div>
     </div>
