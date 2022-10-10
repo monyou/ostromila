@@ -3,7 +3,7 @@ import Head from "next/head";
 import GlobalLoader from "../components/Loader";
 import useGlobalContext from "../contexts/global";
 import { ToastContainer } from "react-toastify";
-import { HomeOutlined, ToolOutlined } from "@ant-design/icons";
+import { HomeOutlined, ToolOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 import type { ItemType } from "antd/lib/menu/hooks/useItems";
@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import logoImg from "../public/assets/logo.png";
 import Image from "next/image";
 import { io, Socket } from "socket.io-client";
+import { deleteCookie, getCookie } from "../utils/withAuth";
+import { AUTH_TOKEN } from "../pages/_app";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -23,6 +25,15 @@ const MainLayout = (props: any) => {
   const router = useRouter();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(true);
+  const [token, setToken] = useState<string>();
+
+  useEffect(() => {
+    const auth_token = getCookie(AUTH_TOKEN!);
+
+    if (token === auth_token) return;
+
+    setToken(auth_token);
+  });
 
   useEffect(() => {
     const openWS = async () => {
@@ -58,7 +69,7 @@ const MainLayout = (props: any) => {
             content.style.zIndex = "initial";
           }
         });
-    }, 50);
+    }, 100);
 
     openWS();
   }, []);
@@ -81,6 +92,14 @@ const MainLayout = (props: any) => {
         key: "/admin",
       },
     ];
+
+    if (token) {
+      items.push({
+        label: translate.MainLayout.MenuItemLogout,
+        icon: <LogoutOutlined />,
+        key: "logout",
+      });
+    }
 
     return items;
   };
@@ -128,7 +147,10 @@ const MainLayout = (props: any) => {
               if (document.body.clientWidth < 576) {
                 setSidebarCollapsed(true);
               }
-              router.push(info.key);
+              if (info.key === "logout") {
+                deleteCookie(AUTH_TOKEN!);
+                router.replace("/login");
+              } else router.push(info.key);
             }}
           />
         </Sider>

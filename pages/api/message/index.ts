@@ -11,7 +11,8 @@ export default async function handler(
 ) {
   const reqHandler = {
     GET: async (prisma) => {
-      const { buildingNumber } = req.query;
+      const { buildingNumber, take } = req.query;
+
       const messages = await prisma.message.findMany({
         where: {
           buildings: {
@@ -21,6 +22,10 @@ export default async function handler(
               },
             },
           },
+        },
+        ...(take && { take: Number(take) }),
+        orderBy: {
+          createdAt: "desc",
         },
         include: {
           buildings: true,

@@ -20,6 +20,7 @@ import withAuth from "../../utils/withAuth";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import type { MessageFull } from "../api/message/all";
+import moment from "moment";
 
 const Tile = styled("div")({
   borderRadius: 10,
@@ -63,7 +64,7 @@ const BuildingPage: NextPage = () => {
         url: `/building?buildingNumber=${buildingNumber}`,
       });
       const messageData = await fetchMessages({
-        url: `/message?buildingNumber=${buildingNumber}`,
+        url: `/message?buildingNumber=${buildingNumber}&take=5`,
       });
 
       if (!data || !messageData) {
@@ -226,6 +227,7 @@ const BuildingPage: NextPage = () => {
               <div key={user.id}>
                 <b>{translate.Globals.user_types[user.user.type]}</b>:{" "}
                 {user.user.name}
+                {user.user.info ? ` (${user.user.info})` : null}
               </div>
             ))}
         </Tile>
@@ -235,10 +237,16 @@ const BuildingPage: NextPage = () => {
             display: "flex",
           }}
         >
-          {
-            translate.BuildingPage(buildingNumber as string)
-              .prevMonthReportNotReady
-          }
+          {building?.reports.findIndex(
+            (r) =>
+              r.date ===
+              `${moment().subtract(1, "months").toDate().getFullYear()}-${
+                moment().subtract(1, "months").toDate().getMonth() + 1
+              }`
+          )
+            ? "TODO"
+            : translate.BuildingPage(buildingNumber as string)
+                .prevMonthReportNotReady}
         </Tile>
         <Tile css={{ gridArea: "report" }}>{renderApartments()}</Tile>
         <Tile css={{ gridArea: "news" }}>
@@ -246,7 +254,21 @@ const BuildingPage: NextPage = () => {
           {messages ? (
             <Collapse ghost>
               {messages.map((message) => (
-                <Collapse.Panel header={message.title} key={message.id}>
+                <Collapse.Panel
+                  header={
+                    <div
+                      css={{ display: "flex", justifyContent: "space-between" }}
+                    >
+                      <span>{message.title}</span>
+                      <span>{`${new Date(message.createdAt).getDate()}.${
+                        new Date(message.createdAt).getMonth() + 1
+                      }.${new Date(message.createdAt).getFullYear()}${
+                        translate.Globals.year_short
+                      }`}</span>
+                    </div>
+                  }
+                  key={message.id}
+                >
                   <div
                     css={{
                       padding: 5,

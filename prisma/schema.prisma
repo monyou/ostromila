@@ -8,14 +8,14 @@ datasource db {
 }
 
 model User {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
-  username        String         @unique
-  password        String
-  name            String?
-  apartmentNumber Int?
-  type            UserType
-  buildings       UserBuilding[]
-  messages        Message[]
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  username  String         @unique
+  password  String
+  name      String?
+  info      String?
+  type      UserType
+  buildings UserBuilding[]
+  messages  Message[]
 }
 
 model UserBuilding {

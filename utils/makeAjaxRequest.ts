@@ -52,7 +52,9 @@ function useMakeAjaxRequest<T>(
             router.replace("/login");
             break;
         }
-        toast.error(translate.ApiErrors[json.Exception]);
+        toast.error(translate.ApiErrors[json.Exception], {
+          toastId: "ajax-error",
+        });
         return null;
       }
     },

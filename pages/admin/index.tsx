@@ -12,6 +12,7 @@ import {
   Input,
   Form,
   type FormInstance,
+  Popconfirm,
 } from "antd";
 import { FilePdfOutlined } from "@ant-design/icons";
 import useMakeAjaxRequest from "../../utils/makeAjaxRequest";
@@ -41,7 +42,9 @@ const AdminPage: NextPage = () => {
   >([]);
   const [selectedBuildingId, setSelectedBuildingId] = useState<string>();
   const [period, setPeriod] = useState<Date | null>(new Date());
+  const [paymentConfirmDialog, setPaymentConfirmDialog] = useState<number>();
   const newMessageFormRef = useRef<FormInstance>(null);
+  const apartmentToPaySwitchRef = useRef<HTMLElement | null>(null);
   const building = useMemo(
     () =>
       buildings.find((building) => building.id === selectedBuildingId) ||
@@ -121,6 +124,8 @@ const AdminPage: NextPage = () => {
         buildingCopy
       );
       setBuildings(buildingsCopy);
+      setPaymentConfirmDialog(undefined);
+      apartmentToPaySwitchRef.current = null;
     } else {
       const report = JSON.stringify({
         buildingId: building.id,
@@ -234,23 +239,54 @@ const AdminPage: NextPage = () => {
               </div>
             </Popover>
             <div>{translate.AdminPage.tax_title(apartment.tax)}</div>
-            <Switch
-              checkedChildren={translate.AdminPage.paid}
-              unCheckedChildren={translate.AdminPage.unpaid}
-              checked={isApartmentTaxPaid(building, apartment.number, period)}
-              onChange={(value) =>
+            <Popconfirm
+              title={translate.AdminPage.payment_confirmation_title(
+                apartment.number,
+                building.number
+              )}
+              placement="bottom"
+              open={paymentConfirmDialog === apartment.number}
+              onConfirm={() =>
                 updateReportHandler(
-                  value,
+                  true,
                   `${period.getFullYear()}-${period.getMonth() + 1}`,
                   apartment.number
                 )
               }
-            />
+              onCancel={() => {
+                apartmentToPaySwitchRef.current?.click();
+                apartmentToPaySwitchRef.current = null;
+                setPaymentConfirmDialog(undefined);
+              }}
+              okText={translate.Globals.yes}
+              cancelText={translate.Globals.no}
+            >
+              <Switch
+                checkedChildren={translate.AdminPage.paid}
+                unCheckedChildren={translate.AdminPage.unpaid}
+                defaultChecked={isApartmentTaxPaid(
+                  building,
+                  apartment.number,
+                  period
+                )}
+                disabled={isApartmentTaxPaid(
+                  building,
+                  apartment.number,
+                  period
+                )}
+                onChange={(value, e) => {
+                  if (!value) return;
+
+                  apartmentToPaySwitchRef.current = e.target as HTMLElement;
+                  setPaymentConfirmDialog(apartment.number);
+                }}
+              />
+            </Popconfirm>
           </div>
         ))}
       </div>
     );
-  }, [building, period]);
+  }, [building, period, paymentConfirmDialog]);
 
   return (
     <div id="admin-page">

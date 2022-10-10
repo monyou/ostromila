@@ -16,9 +16,9 @@ const ApartmentInfo = ({ apartment }: { apartment: Apartment }) => {
       <a href={`tel:${apartment.phone}`}>
         <PhoneOutlined css={{ marginRight: 5 }} /> {apartment.phone}
       </a>
-      <a href={`mailto:${apartment.email}`}>
+      {/* <a href={`mailto:${apartment.email}`}>
         <MailOutlined css={{ marginRight: 5 }} /> {apartment.email}
-      </a>
+      </a> */}
     </div>
   );
 };

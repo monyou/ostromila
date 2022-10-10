@@ -1,7 +1,7 @@
 @import "antd/dist/antd.css";
 @import "react-quill/dist/quill.snow.css";
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
-@import url("https://fonts.googleapis.com/css?family=Bungee");
+@import url("https://fonts.googleapis.com/css?family=Comfortaa");
 
 html,
 body {
@@ -84,11 +84,5 @@ a {
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes alarmOn {
-  to {
-    fill: darkred;
   }
 }

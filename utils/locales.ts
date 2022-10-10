@@ -37,6 +37,7 @@ export type Locale = {
     tax_title: (tax: number) => string;
     paid: string;
     unpaid: string;
+    payment_confirmation_title: (apartmentNumber: number, buildingNumber: number) => string;
     reports: {
       yearly_btn: string;
       monthly_btn: string;
@@ -73,6 +74,7 @@ export type Locale = {
     MenuItem1: string;
     MenuItem2: string;
     MenuItem3: string;
+    MenuItemLogout: string;
   };
   Globals: {
     short_month_names: string[];
@@ -82,6 +84,9 @@ export type Locale = {
       Guest: string;
     };
     information: string;
+    year_short: string;
+    yes: string;
+    no: string;
   };
   ApiErrors: Record<string, string>;
 };
@@ -137,6 +142,8 @@ const locales: Record<string, Locale> = {
       },
       tax_title: (tax) => `Такса ${tax} лв.`,
       unpaid: "Неплатено",
+      payment_confirmation_title: (apartmentNumber, buildingNumber) =>
+        `Потвърждавате ли плащане за Ап.${apartmentNumber}/Б.${buildingNumber}?`,
       news: {
         placeholders: {
           buildings: "Изберете блок/ове за новината",
@@ -171,6 +178,7 @@ const locales: Record<string, Locale> = {
       MenuItem1: "Остромила 144",
       MenuItem2: "Остромила 146",
       MenuItem3: "Администрация",
+      MenuItemLogout: "Изход",
     },
     Globals: {
       short_month_names: [
@@ -193,6 +201,9 @@ const locales: Record<string, Locale> = {
         Guest: "Гост",
       },
       information: "Информация",
+      year_short: "г.",
+      yes: "Да",
+      no: "Не",
     },
     ApiErrors: {
       "403": "Забранен достъп",
