@@ -1,13 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import useGlobalContext from "../contexts/global";
+import useGetTranslation from "../utils/getTranslation";
 
 const Custom403: NextPage = () => {
-  const {
-    state: { translate },
-  } = useGlobalContext();
-  const router = useRouter();
+  const { translate, router } = useGetTranslation();
 
   return (
     <div

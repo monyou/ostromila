@@ -119,7 +119,7 @@ const locales: Record<string, Locale> = {
       title: `Блок ${buildingNumber}`,
       apartment: "Апартамент",
       news: "Новини",
-      report: "Отчет до момента за",
+      report: "Отчет за",
       prevMonthReportNotReady: "Отчетът за миналия месец се генерира",
     }),
     AdminPage: {

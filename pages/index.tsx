@@ -1,11 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import useGlobalContext from "../contexts/global";
+import useGetTranslation from "../utils/getTranslation";
 
 const HomePage: NextPage = () => {
-  const {
-    state: { translate },
-  } = useGlobalContext();
+  const { translate } = useGetTranslation();
 
   return (
     <div id="home-page">
@@ -18,6 +16,7 @@ const HomePage: NextPage = () => {
         css={{
           lineHeight: "calc(100vh - 150px)",
           textAlign: "center",
+          color: "whitesmoke",
         }}
       >
         {translate.HomePage.title}

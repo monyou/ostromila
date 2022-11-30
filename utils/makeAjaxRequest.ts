@@ -1,9 +1,10 @@
-import { useRouter } from "next/router";
 import { useEffect, useState, useCallback } from "react";
-import useGlobalContext, { type GlobalState } from "../contexts/global";
 import { toast } from "react-toastify";
 import { deleteCookie } from "./withAuth";
 import { AUTH_TOKEN } from "../pages/_app";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../redux/slices/globalSlice";
+import useGetTranslation from "./getTranslation";
 
 export type ApiResponse<T> = {
   Exception: string;
@@ -21,15 +22,12 @@ function useMakeAjaxRequest<T>(
   }
 ) {
   const [response, setResponse] = useState<T>();
-  const {
-    state: { translate },
-    dispatch,
-  } = useGlobalContext();
-  const router = useRouter();
+  const { translate, router } = useGetTranslation();
+  const dispatch = useDispatch();
 
   const makeRequest = useCallback(
     async (innerOptions: { url?: string; params?: RequestInit } = {}) => {
-      dispatch({ loading: true } as GlobalState);
+      dispatch(setLoading(true));
       const response = await fetch(
         baseUrl + (innerOptions.url || options.url)!,
         {
@@ -40,7 +38,7 @@ function useMakeAjaxRequest<T>(
         }
       );
       const json = (await response.json()) as ApiResponse<T>;
-      dispatch({ loading: false } as GlobalState);
+      dispatch(setLoading(false));
 
       if (json.Success) {
         setResponse(json.Result);

@@ -1,7 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import useGlobalContext from "../../contexts/global";
-import { useRouter } from "next/router";
 import styled from "@emotion/styled";
 import useMakeAjaxRequest from "../../utils/makeAjaxRequest";
 import type { BuildingFull } from "../api/building";
@@ -21,6 +19,7 @@ import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import type { MessageFull } from "../api/message/all";
 import moment from "moment";
+import useGetTranslation from "../../utils/getTranslation";
 
 const Tile = styled("div")({
   borderRadius: 10,
@@ -32,12 +31,12 @@ const Tile = styled("div")({
 
 const BuildingPage: NextPage = () => {
   const {
-    state: { translate },
-  } = useGlobalContext();
-  const {
-    push,
-    query: { buildingNumber },
-  } = useRouter();
+    translate,
+    router: {
+      push,
+      query: { buildingNumber },
+    },
+  } = useGetTranslation();
 
   const [building, setBuilding] = useState<BuildingFull>();
   const [messages, setMessages] = useState<MessageFull[]>();

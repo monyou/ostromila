@@ -1,11 +1,9 @@
 import "react-toastify/dist/ReactToastify.css";
 import Head from "next/head";
 import GlobalLoader from "../components/Loader";
-import useGlobalContext from "../contexts/global";
 import { ToastContainer } from "react-toastify";
 import { HomeOutlined, ToolOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
-import { useRouter } from "next/router";
 import type { ItemType } from "antd/lib/menu/hooks/useItems";
 import { useEffect, useState } from "react";
 import logoImg from "../public/assets/logo.png";
@@ -13,19 +11,19 @@ import Image from "next/image";
 import { io, Socket } from "socket.io-client";
 import { deleteCookie, getCookie } from "../utils/withAuth";
 import { AUTH_TOKEN } from "../pages/_app";
+import { selectGlobalLoading } from "../redux/slices/globalSlice";
+import { useSelector } from "react-redux";
+import useGetTranslation from "../utils/getTranslation";
 
 const { Content, Footer, Sider } = Layout;
 
 export let socket: Socket | null = null;
 
 const MainLayout = (props: any) => {
-  const {
-    state: { loading, translate },
-  } = useGlobalContext();
-  const router = useRouter();
-
+  const loading = useSelector(selectGlobalLoading);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(true);
   const [token, setToken] = useState<string>();
+  const { translate, router } = useGetTranslation();
 
   useEffect(() => {
     const auth_token = getCookie(AUTH_TOKEN!);
@@ -134,7 +132,7 @@ const MainLayout = (props: any) => {
             }}
             css={{ cursor: "pointer", position: "relative", top: -45 }}
           >
-            <Image src={logoImg} alt="logo" />
+            <Image src={logoImg} alt="logo" width={200} />
           </div>
           <Menu
             css={{ position: "relative", top: -90 }}
@@ -154,11 +152,22 @@ const MainLayout = (props: any) => {
             }}
           />
         </Sider>
-        <Layout>
+        <Layout
+          css={{
+            background: router?.route === "/" ? "red" : "initial",
+          }}
+        >
           <Content css={{ margin: "0px 40px" }}>
             <div>{props.children}</div>
           </Content>
-          <Footer css={{ textAlign: "center", padding: 12 }}>
+          <Footer
+            css={{
+              textAlign: "center",
+              padding: 12,
+              background: router?.route === "/" ? "red" : "initial",
+              color: router?.route === "/" ? "whitesmoke" : "initial",
+            }}
+          >
             ©{new Date().getFullYear()} Created by Simeon Mechkov
           </Footer>
         </Layout>

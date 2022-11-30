@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import useGlobalContext from "../../contexts/global";
 import withAuth, { getCookie } from "../../utils/withAuth";
 import {
   Button,
@@ -26,6 +25,7 @@ import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
 import { AUTH_TOKEN } from "../_app";
 import jwt from "jsonwebtoken";
+import useGetTranslation from "../../utils/getTranslation";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -33,9 +33,7 @@ const { Panel } = Collapse;
 const { Option } = Select;
 
 const AdminPage: NextPage = () => {
-  const {
-    state: { translate },
-  } = useGlobalContext();
+  const { translate } = useGetTranslation();
 
   const [buildings, setBuildings] = useState<
     BuildingWithApartmentsAndReports[]

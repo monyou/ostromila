@@ -1,30 +1,18 @@
-import type { NextApiRequest, NextPage } from "next";
+import type { NextPage } from "next";
 import Head from "next/head";
-import useGlobalContext from "../contexts/global";
 import useMakeAjaxRequest from "../utils/makeAjaxRequest";
 import { Button, Form, Input } from "antd";
 import { LoggedUser } from "./api/login";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { UserType } from "@prisma/client";
-import { setCookie } from "../utils/withAuth";
+import { getCookie, setCookie } from "../utils/withAuth";
 import { AUTH_TOKEN } from "./_app";
 import jwt from "jsonwebtoken";
+import useGetTranslation from "../utils/getTranslation";
 
-export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
-  return {
-    props: {
-      token: req.cookies[AUTH_TOKEN!] || null,
-    },
-  };
-};
-
-const LoginPage: NextPage<{ token: string }> = ({ token }) => {
+const LoginPage: NextPage = () => {
   const [seePage, setSeePage] = useState(false);
-  const {
-    state: { translate },
-  } = useGlobalContext();
-  const router = useRouter();
+  const { translate, router } = useGetTranslation();
   const { makeRequest } = useMakeAjaxRequest<LoggedUser>({
     url: "/login",
     lazy: true,
@@ -34,6 +22,8 @@ const LoginPage: NextPage<{ token: string }> = ({ token }) => {
   });
 
   useEffect(() => {
+    const token = getCookie(AUTH_TOKEN!);
+
     if (!token) {
       setSeePage(true);
       return;

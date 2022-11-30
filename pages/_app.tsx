@@ -1,17 +1,19 @@
 import "../styles/globals.scss";
 import type { AppProps } from "next/app";
 import MainLayout from "../layouts/MainLayout";
-import { GlobalContextProvider } from "../contexts/global";
+import storeWrapper from "../redux/store";
+import { Provider } from "react-redux";
 
 export const AUTH_TOKEN = process.env.NEXT_PUBLIC_AUTH_USER_COOKIE_TOKEN;
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, ...rest }: AppProps) => {
+  const { store, props } = storeWrapper.useWrappedStore(rest);
   return (
-    <GlobalContextProvider>
+    <Provider store={store}>
       <MainLayout>
-        <Component {...pageProps} />
+        <Component {...props.pageProps} />
       </MainLayout>
-    </GlobalContextProvider>
+    </Provider>
   );
 };
 
