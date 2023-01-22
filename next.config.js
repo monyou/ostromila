@@ -10,7 +10,6 @@ const withPWA = require("next-pwa")({
 const nextConfig = withPWA({
   reactStrictMode: false,
   swcMinify: true,
-  // basePath: "/ostromila",
   i18n: {
     locales: ["en", "bg"],
     defaultLocale: "bg",
