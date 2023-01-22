@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import locales from "./locales";
+import locales from "../public/locales";
 
 const useGetTranslation = () => {
   const router = useRouter();
