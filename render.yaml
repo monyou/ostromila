@@ -1,0 +1,16 @@
+version: 1
+build:
+  steps:
+    - name: Install Dependencies
+      shell: true
+      cmd: npm install
+    - name: Build
+      shell: true
+      cmd: npm run build
+    - name: Start Server
+      shell: true
+      cmd: npm run start
+static_sites:
+  - name: ostromila
+    build_command: npm run build
+    publish_directory: .next
