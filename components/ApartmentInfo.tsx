@@ -1,5 +1,4 @@
 import type { Apartment } from "@prisma/client";
-import { UserOutlined, PhoneOutlined, MailOutlined } from "@ant-design/icons";
 
 const ApartmentInfo = ({ apartment }: { apartment: Apartment }) => {
   return (
@@ -11,13 +10,16 @@ const ApartmentInfo = ({ apartment }: { apartment: Apartment }) => {
       }}
     >
       <div>
-        <UserOutlined css={{ marginRight: 5 }} /> {apartment.occupant}
+        <i className="fa-solid fa-user" css={{ marginRight: 5 }}></i>{" "}
+        {apartment.occupant}
       </div>
       <a href={`tel:${apartment.phone}`}>
-        <PhoneOutlined css={{ marginRight: 5 }} /> {apartment.phone}
+        <i className="fa-solid fa-phone" css={{ marginRight: 5 }}></i>{" "}
+        {apartment.phone}
       </a>
       {/* <a href={`mailto:${apartment.email}`}>
-        <MailOutlined css={{ marginRight: 5 }} /> {apartment.email}
+        <i className="fa-solid fa-envelope" css={{ marginRight: 5 }}></i>{" "}
+        {apartment.email}
       </a> */}
     </div>
   );

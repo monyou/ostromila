@@ -14,6 +14,7 @@ import { AUTH_TOKEN } from "../pages/_app";
 import { selectGlobalLoading } from "../redux/slices/globalSlice";
 import { useSelector } from "react-redux";
 import useGetTranslation from "../utils/getTranslation";
+import Script from "next/script";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -114,6 +115,10 @@ const MainLayout = (props: any) => {
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
         />
       </Head>
+      <Script
+        src="https://kit.fontawesome.com/87db73e101.js"
+        crossOrigin="anonymous"
+      ></Script>
 
       <Layout css={{ minHeight: "100vh" }}>
         <Sider
