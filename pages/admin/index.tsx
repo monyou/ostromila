@@ -13,7 +13,6 @@ import {
   type FormInstance,
   Popconfirm,
 } from "antd";
-import { FilePdfOutlined } from "@ant-design/icons";
 import useMakeAjaxRequest from "../../utils/makeAjaxRequest";
 import type { BuildingWithApartmentsAndReports } from "../api/building/all";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -348,7 +347,12 @@ const AdminPage: NextPage = () => {
               <Button
                 css={{ marginBottom: 16, display: "block" }}
                 type="primary"
-                icon={<FilePdfOutlined />}
+                icon={
+                  <i
+                    className="fa-solid fa-file-pdf"
+                    css={{ marginRight: "5px" }}
+                  ></i>
+                }
                 onClick={() => handleReportCreation("monthly")}
               >
                 {translate.AdminPage.reports.monthly_btn}
@@ -356,7 +360,12 @@ const AdminPage: NextPage = () => {
               <Button
                 css={{ display: "block" }}
                 type="primary"
-                icon={<FilePdfOutlined />}
+                icon={
+                  <i
+                    className="fa-solid fa-file-pdf"
+                    css={{ marginRight: "5px" }}
+                  ></i>
+                }
                 onClick={() => handleReportCreation("yearly")}
               >
                 {translate.AdminPage.reports.yearly_btn}

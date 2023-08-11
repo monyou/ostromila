@@ -2,7 +2,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Head from "next/head";
 import GlobalLoader from "../components/Loader";
 import { ToastContainer } from "react-toastify";
-import { HomeOutlined, ToolOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import type { ItemType } from "antd/lib/menu/hooks/useItems";
 import { useEffect, useState } from "react";
@@ -77,17 +76,17 @@ const MainLayout = (props: any) => {
     const items: ItemType[] = [
       {
         label: translate.MainLayout.MenuItem1,
-        icon: <HomeOutlined />,
+        icon: <i className="fa-solid fa-house"></i>,
         key: "/buildings/144",
       },
       {
         label: translate.MainLayout.MenuItem2,
-        icon: <HomeOutlined />,
+        icon: <i className="fa-solid fa-house"></i>,
         key: "/buildings/146",
       },
       {
         label: translate.MainLayout.MenuItem3,
-        icon: <ToolOutlined />,
+        icon: <i className="fa-solid fa-gear"></i>,
         key: "/admin",
       },
     ];
@@ -95,7 +94,7 @@ const MainLayout = (props: any) => {
     if (token) {
       items.push({
         label: translate.MainLayout.MenuItemLogout,
-        icon: <LogoutOutlined />,
+        icon: <i className="fa-solid fa-arrow-right-from-bracket"></i>,
         key: "logout",
       });
     }

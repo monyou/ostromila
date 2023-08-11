@@ -5,11 +5,6 @@ import useMakeAjaxRequest from "../../utils/makeAjaxRequest";
 import type { BuildingFull } from "../api/building";
 import { useCallback, useEffect, useState } from "react";
 import isApartmentTaxPaid from "../../utils/isApartmentTaxPaid";
-import {
-  CheckCircleFilled,
-  CloseCircleFilled,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
 import { type Report, UserType } from "@prisma/client";
 import { socket } from "../../layouts/MainLayout";
 import { Popover, Collapse } from "antd";
@@ -154,24 +149,31 @@ const BuildingPage: NextPage = () => {
                 trigger="click"
                 placement="right"
               >
-                <InfoCircleOutlined
-                  className="info-icon"
+                <i
+                  className="fa-solid fa-circle-info info-icon"
                   css={{
                     cursor: "pointer",
                     transition: "all .5s",
                     marginRight: 5,
                     fontSize: "1.3em",
+                    verticalAlign: "text-top",
                   }}
-                />
+                ></i>
               </Popover>
               {translate.BuildingPage(buildingNumber as string).apartment}{" "}
               {apartment.number}
             </div>
             <div>
               {isApartmentTaxPaid(building, apartment.number) ? (
-                <CheckCircleFilled css={{ color: "green" }} />
+                <i
+                  className="fa-solid fa-circle-check"
+                  css={{ color: "green" }}
+                ></i>
               ) : (
-                <CloseCircleFilled css={{ color: "red" }} />
+                <i
+                  className="fa-solid fa-circle-xmark"
+                  css={{ color: "red" }}
+                ></i>
               )}
             </div>
           </div>
