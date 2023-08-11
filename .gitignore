@@ -134,4 +134,3 @@ graphql_schema.json
 
 /public/sw.js
 /public/workbox*
-/package-lock.json
